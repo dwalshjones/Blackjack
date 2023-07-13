@@ -53,37 +53,92 @@ let cards = [
   { id: 52, name: 'AS', value: [1, 11], suit: 'S', image: 'images/AS.png' },
 ]
 
+// Dealer
 let dealerHand = []
 let dealerHandValue = []
+
+// Player
 let playerHand = []
 let playerHandValue = []
+let playerHandTotal = document.getElementById('playerHand')
+
+// Buttons
 let dealButton = document.getElementById('deal')
 let hitButton = document.getElementById('hit')
 let stayButton = document.getElementById('stay')
+
+// Images
+let playerCardsContainer = document.getElementById('playerCards')
 
 dealButton.addEventListener('click', draw)
 hitButton.addEventListener('click', playerHit)
 stayButton.addEventListener('click', stay)
 
-//write a function that will draw a random dealer hand
+// Deal
 
 function draw() {
+  // Dealer
   for (let i = 0; i < 2; i++) {
-    let randomId = Math.floor(Math.random() * (52 - 1) + 1)
+    let randomId = Math.floor(Math.random() * 52)
     dealerHand.push(randomId)
   }
   console.log(dealerHand)
+
+  // Player
+
   for (let i = 0; i < 2; i++) {
-    let randomId = Math.floor(Math.random() * (52 - 1) + 1)
-    playerHand.push(randomId)
+    let randomId = Math.floor(Math.random() * 52)
+    if (randomId != dealerHand[0] || dealerHand[1]) {
+      playerHand.push(randomId)
+    } else {
+      playerDraw()
+    }
   }
-  //console.log(playerHand)
+  let playerHandID0 = cards.find((card) => card.id === playerHand[0])
+  console.log(`player Hand ID 1 Object: ${playerHandID0}`)
+
+  // Finds [1] Object
+  let playerHandID1 = cards.find((card) => card.id === playerHand[1])
+  console.log(`player Hand ID 2 Object: ${playerHandID1}`)
+
+  // Finds [0] Object Value
+  let playerHandValue0 = parseInt(playerHandID0.value, 10)
+  console.log(`player Hand Value 1: ${playerHandValue0}`)
+
+  // Finds [0] Object Value
+  let playerHandValue1 = parseInt(playerHandID1.value, 10)
+  console.log(`player Hand Value 2: ${playerHandValue1}`)
+  playerHandTotal.innerHTML = `Player Hand:  ${
+    playerHandValue0 + playerHandValue1
+  }`
+  displayCard()
+}
+
+function playerDraw() {
+  for (let i = 0; i < 2; i++) {
+    let randomId = Math.floor(Math.random() * 52)
+    if (randomId != dealerHand[0] || dealerHand[1]) {
+      playerHand.push(randomId)
+    } else {
+      playerDraw()
+    }
+  }
+  displayCard()
+  console.log(playerHand)
 }
 
 function playerHit() {
-  let randomId = Math.floor(Math.random() * (52 - 1) + 1)
+  let randomId = Math.floor(Math.random() * 52)
   playerHand.push(randomId)
   //console.log(playerHand)
+}
+function displayCard() {
+  for (let i = 0; i < playerHand.length; i++) {
+    let playerHandID = cards.find((card) => card.id === playerHand[i])
+    let img = document.createElement('img')
+    img.src = playerHandID.image
+    playerCardsContainer.appendChild(img)
+  }
 }
 
 function dealerHit() {
@@ -113,11 +168,17 @@ function stay() {
   // console.log(dealerHandTotal)
 
   // If Value is Less than 16
-
   if (dealerHandTotal < 16) {
-    let randomId = Math.floor(Math.random() * (52 - 1) + 1)
-    dealerHand.push(randomId)
+    let randomId = Math.floor(Math.random() * 52)
+
+    // Double Up Fix
+    if (randomId != playerHand[0] || playerHand[1]) {
+      dealerHand.push(randomId)
+    } else {
+      stay()
+    }
     console.log(`Dealer Hand 2: ${dealerHand}`)
+    //
 
     let dealerHandID2 = cards.find((card) => card.id === randomId)
     let dealerHandValue2 = dealerHandID2 ? parseInt(dealerHandID2.value, 10) : 0
@@ -128,8 +189,14 @@ function stay() {
     console.log(
       `Dealer Hand 3: ${dealerHandTotal + parseInt(dealerHandValue2, 10)}`
     )
+
+    // Final Total
+    dealerHandValue = dealerHandTotal + dealerHandValue2
+    console.log(dealerHandValue)
+    //
   } else {
+    console.log(dealerHandValue)
   }
 }
+
 // console.log('dealer hand value ' + cards[dealerHandValue0].value)
-//   if dealerHandValue <= 16
