@@ -1,3 +1,4 @@
+// Cards
 let cards = [
   { id: 1, name: '2C', value: 2, suit: 'C', image: 'images/2C.png' },
   { id: 2, name: '2D', value: 2, suit: 'D', image: 'images/2D.png' },
@@ -47,35 +48,35 @@ let cards = [
   { id: 46, name: 'KD', value: 10, suit: 'D', image: 'images/KD.png' },
   { id: 47, name: 'KH', value: 10, suit: 'H', image: 'images/KH.png' },
   { id: 48, name: 'KS', value: 10, suit: 'S', image: 'images/KS.png' },
-  { id: 49, name: 'AC', value: [1, 11], suit: 'C', image: 'images/AC.png' },
-  { id: 50, name: 'AD', value: [1, 11], suit: 'D', image: 'images/AD.png' },
-  { id: 51, name: 'AH', value: [1, 11], suit: 'H', image: 'images/AH.png' },
-  { id: 52, name: 'AS', value: [1, 11], suit: 'S', image: 'images/AS.png' },
+  { id: 49, name: 'AC', value: 11, suit: 'C', image: 'images/AC.png' },
+  { id: 50, name: 'AD', value: 11, suit: 'D', image: 'images/AD.png' },
+  { id: 51, name: 'AH', value: 11, suit: 'H', image: 'images/AH.png' },
+  { id: 52, name: 'AS', value: 11, suit: 'S', image: 'images/AS.png' },
 ]
 
-// Dealer
+// Dealer Variables
 let dealerHand = []
 let dealerHandValue = []
 
-// Player
+// Player Variables
 let playerHand = []
 let playerHandValue = []
 let playerHandTotal = document.getElementById('playerHand')
 
-// Buttons
+// Buttons Variables
 let dealButton = document.getElementById('deal')
 let hitButton = document.getElementById('hit')
 let stayButton = document.getElementById('stay')
 
-// Images
+// Images Variables
 let playerCardsContainer = document.getElementById('playerCards')
 
+// Event Listeners
 dealButton.addEventListener('click', draw)
 hitButton.addEventListener('click', playerHit)
 stayButton.addEventListener('click', stay)
 
-// Deal
-
+// Deal Function
 function draw() {
   // Dealer
   for (let i = 0; i < 2; i++) {
@@ -84,11 +85,11 @@ function draw() {
   }
   console.log(dealerHand)
 
-  // Player
+  // Player Draw
 
   for (let i = 0; i < 2; i++) {
     let randomId = Math.floor(Math.random() * 52)
-    if (randomId != dealerHand[0] || dealerHand[1]) {
+    if (randomId != dealerHand[0] && randomId != dealerHand[1]) {
       playerHand.push(randomId)
     } else {
       playerDraw()
@@ -105,9 +106,10 @@ function draw() {
   let playerHandValue0 = parseInt(playerHandID0.value, 10)
   console.log(`player Hand Value 1: ${playerHandValue0}`)
 
-  // Finds [0] Object Value
+  // Finds [1] Object Value
   let playerHandValue1 = parseInt(playerHandID1.value, 10)
   console.log(`player Hand Value 2: ${playerHandValue1}`)
+
   playerHandTotal.innerHTML = `Player Hand:  ${
     playerHandValue0 + playerHandValue1
   }`
@@ -127,24 +129,37 @@ function playerDraw() {
   console.log(playerHand)
 }
 
+// Hit Function
 function playerHit() {
-  let randomId = Math.floor(Math.random() * 52)
-  playerHand.push(randomId)
-  //console.log(playerHand)
+  if (playerHand.length < 3) {
+    let randomId
+    do {
+      randomId = Math.floor(Math.random() * 52)
+    } while (playerHand.includes(randomId))
+    playerHand.push(randomId)
+    displayCard()
+  }
 }
+
+// Display Function
 function displayCard() {
+  playerCardsContainer.innerHTML = ''
+
   for (let i = 0; i < playerHand.length; i++) {
     let playerHandID = cards.find((card) => card.id === playerHand[i])
     let img = document.createElement('img')
     img.src = playerHandID.image
     playerCardsContainer.appendChild(img)
+    img.style.width = '20%'
   }
 }
 
+// Dealer Function
 function dealerHit() {
   // console.log(dealerHand)
 }
 
+// Stay Function
 function stay() {
   // Finds [0] Object
   let dealerHandID0 = cards.find((card) => card.id === dealerHand[0])
